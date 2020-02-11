@@ -48,7 +48,7 @@ class Client(object):
             self.client.connect((server_ip_address, server_port))
             self.set_client_id()
         except Exception as e:
-            print("Error: " + str(e))
+            print("Connection Error: " + str(e))
 
         # data dictionary already created for you. Don't modify.
         data = {'student_name': self.student_name, 'github_username': self.github_username, 'sid': self.sid}
@@ -96,7 +96,10 @@ class Client(object):
         TODO: close this client
         :return: VOID
         """
-        self.client.close()
+        try:
+            self.client.close()
+        except Exception as e:
+            print("Closing Error: " + str(e))
 
 # main execution
 if __name__ == '__main__':
