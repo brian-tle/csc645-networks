@@ -3,9 +3,9 @@
 # Date: 02/03/2020
 # Lab3: TCP Server Socket
 # Goal: Learning Networking in Python with TCP sockets
-# Student Name:
-# Student ID:
-# Student Github Username:
+# Student Name: Brian Le
+# Student ID: 916970215
+# Student Github Username: brian-tle
 # Lab Instructions: No partial credit will be given. Labs must be completed in class, and must be committed to your
 #               personal repository by 9:45 pm.
 # Program Running instructions:
@@ -37,14 +37,15 @@ class Server(object):
         """
         self.host = host
         self.port = port
-        self.serversocket = None # TODO: create the server socket
+        #self.serversocket = None # TODO: create the server socket
+        self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def _bind(self):
         """
         # TODO: bind host and port to this server socket
         :return: VOID
         """
-        pass #remove this line after implemented.
+        self.serversocket.bind((self.host, self.port))
 
     def _listen(self):
         """
@@ -52,10 +53,14 @@ class Server(object):
         # TODO: if succesful, print the message "Server listening at ip/port"
         :return: VOID
         """
+        print("="*10 + " _listen " + "="*10)
         try:
             self._bind()
             # your code here
-        except:
+            self.serversocket.listen(self.MAX_NUM_CONN)
+            print("Server is listening at ip: " + str(self.host) + ", port: " + str(self.port))
+        except Exception as e:
+            print("Error _listen: " + str(e))
             self.serversocket.close()
 
     def _handler(self, clienthandler):
@@ -64,11 +69,21 @@ class Server(object):
         :param clienthandler:
         :return:
         """
+         # TODO: receive data from client
+         # TODO: if no data, break the loop
+         # TODO: Otherwise, send acknowledge to client. (i.e a message saying 'server got the data
+
+        print("="*10 + " _handler " + "="*10)
         while True:
-             # TODO: receive data from client
-             # TODO: if no data, break the loop
-             # TODO: Otherwise, send acknowledge to client. (i.e a message saying 'server got the data
-             pass  # remove this line after implemented.
+            try:
+                data = self.receive(clienthandler)
+                #print("Nothing")
+            except socket.error as e:
+                print('No data available')
+                break
+            else:
+                print("Received: ")
+                print(data)
 
     def _accept_clients(self):
         """
@@ -77,13 +92,24 @@ class Server(object):
         """
         while True:
             try:
+               print("="*10 + " _accept_clients " + "="*10)
                clienthandler, addr = self.serversocket.accept()
                # TODO: from the addr variable, extract the client id assigned to the client
                # TODO: send assigned id to the new client. hint: call the send_clientid(..) method
+               server_ip = addr[0]
+               client_id = addr[1]
+
+               print("\tserver_ip: " + str(server_ip))
+               print("\tclient_id: " + str(client_id))
+
+               self._send_clientid(clienthandler, client_id)
+
                self._handler(clienthandler) # receive, process, send response to client.
-            except:
-               # handle exceptions here
-               pass #remove this line after implemented.
+               clienthandler.close()
+            except Exception as e:
+                print("Error _accept_clients: " + str(e))
+                break
+            # handle exceptions here
 
     def _send_clientid(self, clienthandler, clientid):
         """
@@ -92,8 +118,9 @@ class Server(object):
         :param clientid:
         :return: VOID
         """
-        pass  # remove this line after implemented.
-
+        data = {'clientid': clientid}
+        send_data = pickle.dumps(data)
+        clienthandler.send(send_data)
 
     def send(self, clienthandler, data):
         """
@@ -103,7 +130,8 @@ class Server(object):
         :param data: raw data (not serialized yet)
         :return: VOID
         """
-        pass #remove this line after implemented.
+        serialize_data = clienthandler.dump(data)
+        clienthandler.send(serialize_data)
 
     def receive(self, clienthandler, MAX_ALLOC_MEM=4096):
         """
@@ -111,7 +139,10 @@ class Server(object):
         :param MAX_ALLOC_MEM: default set to 4096
         :return: the deserialized data.
         """
-        return None #change the return value after implemente.
+        receiving_data = clienthandler.recv(MAX_ALLOC_MEM)
+        deserialized_data = pickle.loads(receiving_data)
+
+        return deserialized_data #change the return value after implemente.
 
     def run(self):
         """
@@ -119,8 +150,12 @@ class Server(object):
         Run the server.
         :return: VOID
         """
-        self._listen()
-        self._accept_clients()
+
+        try:
+            self._listen()
+            self._accept_clients()
+        except:
+            print("\n" + "="*10 + " Forced close " + "="*10)
 
 # main execution
 if __name__ == '__main__':
