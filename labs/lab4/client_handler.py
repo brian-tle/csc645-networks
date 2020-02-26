@@ -1,16 +1,3 @@
-########################################################################################################################
-# Class: Computer Networks
-# Date: 02/03/2020
-# Lab3: Server support for multiple clients
-# Goal: Learning Networking in Python with TCP sockets
-# Student Name:
-# Student ID:
-# Student Github Username:
-# Lab Instructions: No partial credit will be given. Labs must be completed in class, and must be committed to your
-#               personal repository by 9:45 pm.
-# Running instructions: This program needs the server to run. The server creates an object of this class.
-#
-########################################################################################################################
 import threading
 
 class ClientHandler(object):
@@ -30,13 +17,19 @@ class ClientHandler(object):
         self.server = server_instance
         self.clienthandler = clienthandler
 
+        self.student_name = 'Brian Le' # TODO: your name
+        self.github_username = 'brian-tle' # TODO: your username
+        self.sid = 916970215 # TODO: your student id
+
     def print_lock(self):
         """
         TODO: create a new print lock
         :return: the lock created
         """
         # your code here.
-        return None # modify the return to return a the lock created
+        write_lock = threading.Lock()
+
+        return write_lock # modify the return to return a the lock created
 
     def process_client_data(self):
         """
@@ -48,4 +41,26 @@ class ClientHandler(object):
         TODO: release the print lock
         :return: VOID
         """
-        pass # remove this line after implemented.
+
+        data = {'student_name': self.student_name, 'github_username': self.github_username, 'sid': self.sid}
+        MAX_BUFFER_SIZE=4090
+        lock = print_lock()
+        send = pickle.dumps(data)
+        self.clienthandler.send(data)
+
+        while True:
+            try:
+                data = self.clienthandler.recv(MAX_BUFFER_SIZE)
+                serialized_data = pickle.loads(data)
+
+                lock.acquire()
+                if not serialized_data:
+                    break
+                else:
+                    print(serialized_data)
+
+                lock.releae()
+            except Exception as e:
+                print(str(e))
+
+        #pass # remove this line after implemented.

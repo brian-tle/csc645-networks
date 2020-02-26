@@ -55,11 +55,17 @@ class Client(object):
 
         #TODO  3. send the above data to the server. using the send method which has been already implemented for you.
 
+        self.send(data)
         while True: # client is put in listening mode to retrieve data from server.
-            self.send(data)
-            data = self.receive()
-            if not data:
-                break
+            try:
+                #self.send(data)
+                data = self.receive()
+                if not data:
+                    break
+                else:
+                    print(data)
+            except Exception as e:
+                print(str(e))
             # do something with the data
         self.close()
 
@@ -103,8 +109,8 @@ class Client(object):
 
 # main execution
 if __name__ == '__main__':
-    server_ip_address = "10.143.97.180"  # TODO: change this to the server ip address provided by instructor in class
-    server_port = 5001
+    server_ip_address = "127.0.0.1"  # TODO: change this to the server ip address provided by instructor in class
+    server_port = 12000
     client = Client()
     client.connect(server_ip_address, server_port)
 

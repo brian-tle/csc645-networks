@@ -19,6 +19,8 @@ import socket
 import pickle
 from threading import Thread
 
+from client_handler import ClientHandler
+
 class Server(object):
     """
     The server class implements a server socket that can handle multiple client connections.
@@ -79,14 +81,18 @@ class Server(object):
                 data = self.receive(clienthandler)
                 print(data)
 
-                # message = raw_input("Server got the data")
-                # self.send(clienthandler, message)
-                self.send(clienthandler, 'Hello!')
+                message = "Server got message"
+                self.send(clienthandler, message)
 
             except socket.error as e:
                 print('No data available')
                 break
             
+
+    def thread_client(self, clienthandler, addr):
+        # init the client handler object
+        ClientHandler(clienthandler, addr).init()
+   
 
     def _accept_clients(self):
         """
@@ -99,6 +105,7 @@ class Server(object):
                clienthandler, addr = self.serversocket.accept()
                # TODO: from the addr variable, extract the client id assigned to the client
                # TODO: send assigned id to the new client. hint: call the send_clientid(..) method
+               Thread(target=self.thread_client, args=(clienthandler, addr)).start()
                server_ip = addr[0]
                client_id = addr[1]
 
@@ -106,6 +113,8 @@ class Server(object):
                print("\tclient_id: " + str(client_id))
 
                self._send_clientid(clienthandler, client_id)
+               message = "Server got message"
+               self.send(clienthandler, message)
 
                self._handler(clienthandler) # receive, process, send response to client.
                clienthandler.close()
