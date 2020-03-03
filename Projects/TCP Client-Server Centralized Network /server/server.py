@@ -29,6 +29,10 @@ class Server(object):
         self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.clients = {} # dictionary of clients handlers objects handling clients. format {clientid:client_handler_object}
         # TODO: bind the socket to a public host, and a well-known port
+        self.serversocket.bind((ip_address, port))
+
+        self.ip_address = ip_address
+        self.port = port
 
 
     def _listen(self):
@@ -39,7 +43,11 @@ class Server(object):
         :return: VOID
         """
         #TODO: your code here
-        pass
+        try:
+            self.serversocket.listen(self.MAX_NUM_CONN)
+            print("Listening at " + str(self.ip_address) + "/" + str(self.port))
+        except Exception as e:
+            print("Error in _listen: " + str(e))
 
 
     def _accept_clients(self):
@@ -51,9 +59,16 @@ class Server(object):
             try:
                 #TODO: Accept a client
                 #TODO: Create a thread of this client using the client_handler_threaded class
+                clienthandler, addr = self.serversocket.accept()
+
+                #Thread(target=self.thread_client, args=(clienthandler, addr)).start()
+                server_ip = addr[0]
+                client_id = addr[1]
+                print("server_ip :" + server_ip + " | client_id : " + client_id)
                 pass
-            except:
+            except Exception as e:
                 #TODO: Handle exceptions
+                print("Error in _accept_clients: " + str(e))
                 pass
 
 
@@ -64,7 +79,8 @@ class Server(object):
         :param data:
         :return:
         """
-        pass
+        serialized_data = pickle.dumps(data)
+        clientsocket.send(serialized_data)
 
 
     def receive(self, clientsocket, MAX_BUFFER_SIZE=4096):
@@ -74,7 +90,10 @@ class Server(object):
         :param MAX_BUFFER_SIZE:
         :return: the deserialized data
         """
-        return None
+        receiving_data = clientsocket.recv(MAX_BUFFER_SIZE)
+        deserialize_data = pickle.loads(receiving_data)
+
+        return deserialize_data
 
     def send_client_id(self, clientsocket, id):
         """
@@ -96,7 +115,9 @@ class Server(object):
         """
         self.send_client_id(clientsocket)
         #TODO: create a new client handler object and return it
-        return None
+        client_handler_object = ClientHandler()
+
+        return client_handler_object
 
 
     def run(self):

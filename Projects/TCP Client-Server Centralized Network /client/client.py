@@ -43,7 +43,14 @@ class Client(object):
         :param port: 
         :return: VOID
         """
-        pass
+        try:
+            self.clientSocket.connect((host, port))
+            data = self.receive()
+            new_client_id = data['clientid']
+            self.clientid = new_client_id
+
+        except Exception as e:
+            print("Error in connect: " + str(e))
 		
 	
     def send(self, data):
@@ -52,7 +59,9 @@ class Client(object):
         :param data:
         :return:
         """
-        pass
+        serialize_data = pickle.dumps(data)
+        self.clientSocket.send(serialize_data)
+
 
     def receive(self, MAX_BUFFER_SIZE=4090):
         """
@@ -60,7 +69,10 @@ class Client(object):
         :param MAX_BUFFER_SIZE: Max allowed allocated memory for this data
         :return: the deserialized data.
         """
-        return None
+        raw_data = self.clientSocket.recv(MAX_BUFFER_SIZE)
+        received_data = pickle.loads(raw_data)
+
+        return received_data
         
 
     def close(self):
@@ -68,9 +80,8 @@ class Client(object):
         TODO: close the client socket
         :return: VOID
         """
-        pass
+        self.clientSocket.close()
 
-		
 
 if __name__ == '__main__':
     client = Client()

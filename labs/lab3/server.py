@@ -108,7 +108,7 @@ class Server(object):
                self._send_clientid(clienthandler, client_id)
 
                self._handler(clienthandler) # receive, process, send response to client.
-               clienthandler.close()
+               #clienthandler.close()
             except Exception as e:
                 print("Error _accept_clients: " + str(e))
                 break
