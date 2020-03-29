@@ -3,11 +3,15 @@
 Please use this README file to provide the following documentation for this project:
 
 * Your name and student id
+Brian Le
+916970215
 * General description of the project (a few sentences)
+python tcp chat 
 * If you used external Python modules/libraries. Provide a requeriments.txt file  
 * Python version and compatibility issues (if any). Your project must be run exactelly as in the running instructions described below in this file
 * Attach screenshots or videos to this file to ilustrate how your program works for all the options in the menu. 
 * A few sentences about all the challenges you found during the implementation of this project and how you overcame them. Please be honest here. 
+Threads / 
 
 ## Note that failure to provide the above docs will result in a 30% deduction in your final grade for this project. 
 

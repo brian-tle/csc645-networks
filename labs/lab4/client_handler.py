@@ -59,7 +59,7 @@ class ClientHandler(object):
                 else:
                     print(serialized_data)
 
-                lock.releae()
+                lock.release()
             except Exception as e:
                 print(str(e))
 

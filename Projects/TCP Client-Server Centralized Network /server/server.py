@@ -15,11 +15,14 @@ import socket
 from threading import Thread
 import pickle
 
-class Server(object):
+from client_handler import ClientHandler
+from menu import Menu
+import threading
 
+class Server(object):
     MAX_NUM_CONN = 10
 
-    def __init__(self, ip_address='127.0.0.1', port=12005):
+    def __init__(self, ip_address='127.0.0.1', port=12012):
         """
         Class constructor
         :param ip_address:
@@ -27,13 +30,12 @@ class Server(object):
         """
         # create an INET, STREAMing socket
         self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.clients = {} # dictionary of clients handlers objects handling clients. format {clientid:client_handler_object}
+        self.clients = {}  # dictionary of clients handlers objects handling clients. format {clientid:client_handler_object}
         # TODO: bind the socket to a public host, and a well-known port
-        self.serversocket.bind((ip_address, port))
-
         self.ip_address = ip_address
         self.port = port
-
+        self.serversocket.bind((ip_address, port))
+        self.secret_messages = []
 
     def _listen(self):
         """
@@ -42,7 +44,7 @@ class Server(object):
         i.e "Listening at 127.0.0.1/10000"
         :return: VOID
         """
-        #TODO: your code here
+        # TODO: your code here
         try:
             self.serversocket.listen(self.MAX_NUM_CONN)
             print("Listening at " + str(self.ip_address) + "/" + str(self.port))
@@ -57,20 +59,28 @@ class Server(object):
         """
         while True:
             try:
-                #TODO: Accept a client
-                #TODO: Create a thread of this client using the client_handler_threaded class
+                # TODO: Accept a client
+                # TODO: Create a thread of this client using the client_handler_threaded class
                 clienthandler, addr = self.serversocket.accept()
 
-                #Thread(target=self.thread_client, args=(clienthandler, addr)).start()
+                # Thread(target=self.thread_client, args=(clienthandler, addr)).start()
                 server_ip = addr[0]
                 client_id = addr[1]
-                print("server_ip :" + server_ip + " | client_id : " + client_id)
-                pass
-            except Exception as e:
-                #TODO: Handle exceptions
-                print("Error in _accept_clients: " + str(e))
-                pass
 
+                getName = self.receive(clienthandler)
+                if getName not in self.clients:
+                    self.clients[getName] = client_id
+
+                Thread(target=self.client_handler_thread, args=(clienthandler, addr)).start()
+                
+                print("Connection by Client Name: " + str(getName) + " | Client ID: " + str(client_id))
+
+                # self.client_handler_thread(clienthandler, addr)
+                # pass
+            except Exception as e:
+                # TODO: Handle exceptions
+                print("Error in _accept_clients: "+ str(e))
+                pass
 
     def send(self, clientsocket, data):
         """
@@ -81,7 +91,6 @@ class Server(object):
         """
         serialized_data = pickle.dumps(data)
         clientsocket.send(serialized_data)
-
 
     def receive(self, clientsocket, MAX_BUFFER_SIZE=4096):
         """
@@ -113,12 +122,29 @@ class Server(object):
         :param address:
         :return: a client handler object.
         """
-        self.send_client_id(clientsocket)
-        #TODO: create a new client handler object and return it
-        client_handler_object = ClientHandler()
+        ### ADDED ADDRESS HERE CAUSE WASNT HERE N CAUSED ERRORS
+        self.send_client_id(clientsocket, address[1])
+        # TODO: create a new client handler object and return it
 
-        return client_handler_object
+        lock = threading.Lock()
+        ch = ClientHandler(self, clientsocket, address)
+        menu = Menu(clientsocket)
+        sm = (menu.show_menu())
+        sd = {'c_menu': sm}
 
+        while True:
+            self.send(clientsocket, sm)
+
+            lock.acquire()
+
+            # self.send(clientsocket, sm)
+            ch.process_options()
+
+
+            lock.release()
+
+            # return x
+        clientsocket.close()
 
     def run(self):
         """
@@ -128,9 +154,6 @@ class Server(object):
         self._listen()
         self._accept_clients()
 
-
 if __name__ == '__main__':
     server = Server()
     server.run()
-
-

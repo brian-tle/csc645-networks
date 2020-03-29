@@ -12,6 +12,12 @@
 import socket
 import pickle
 
+# import server
+
+from datetime import datetime
+
+
+
 class Client(object):
     """
     The client class provides the following functionality:
@@ -30,26 +36,97 @@ class Client(object):
         self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         self.clientid = 0
+        self.newClientSocket = None
         
     def get_client_id(self):
         return self.clientid
 
     
-    def connect(self, host="127.0.0.1", port=12000):
+    def connect(self, host="127.0.0.1", port=12012):
         """
         TODO: Connects to a server. Implements exception handler if connection is resetted. 
-	    Then retrieves the cliend id assigned from server, and sets
+	    Then reteves the cliend id assigned from server, and sets
         :param host: 
         :param port: 
         :return: VOID
         """
+        print("Server IP address: " + host)
+        print("Server port: " + str(port))
+        user_name = str(input("Your id key (name): "))
+
         try:
             self.clientSocket.connect((host, port))
+
+            self.send(user_name)
+
             data = self.receive()
-            new_client_id = data['clientid']
-            self.clientid = new_client_id
+            if not data:
+                pass
+            else:
+                new_client_id = data['clientid']
+                data['username'] = user_name
+                self.clientid = new_client_id
+
+            print("Successfully connected to server with IP: " + str(host) + " and port: " + str(port))
+            print("Your client info is:\
+                \nClient name: " + user_name + \
+                "\nClient ID: " + str(self.clientid))
+
+
+            while True:
+                menu_options = self.receive()
+                print(menu_options)
+
+                key = int(input("\nYour option <enter a number>: "))
+                send_key = {'option_selected': key}
+
+                if key >= 1 or key <= 6:
+                    if key == 1:
+                        # Get user list
+                        self.send(send_key)
+                    elif key == 2:
+                        # Send message to a user
+                        s_note = input("Enter your message: ")
+                        s_receiver = input("Enter recipent id: ")
+                        date_now = datetime.now()
+                        s_date = date_now.strftime("%m-%d-%Y %H:%M:%S")
+
+                        s_msg = (str(s_date) + ": " + str(s_note) + " (from: " + user_name + ")")
+
+                        message = {'recipient_id': s_receiver, 'message': s_msg}
+                        send_key.update(message)
+
+                        self.send(send_key)
+                    elif key == 3:
+                        # Get messages
+                        self.send(send_key)
+                    elif key == 4:
+                        # Create a chat room
+                        # Port
+                        room_id = input("Enter a new room id: ")
+                        chat_id = input("Enter a chat room id: ")
+
+                        room_info = {'room_id': room_id, 'chat_id': chat_id, 'chat_user': user_name}
+                        send_key.update(room_info)
+
+                        self.send(send_key)
+                    elif key == 5:
+                        # Join a chat room
+                        room_id = input("Enter chat room id to join: ")
+
+                        join_info = {'room_id': room_id, 'chat_user': user_name}
+                        send_key.update(join_info)
+
+                        self.send(send_key)
+                    elif key == 6:
+                        # Disconnect from server
+                        self.send(send_key)
+                else:
+                    print("\nInvalid option!")
+                    pass
 
         except Exception as e:
+            self.close()
             print("Error in connect: " + str(e))
 		
 	

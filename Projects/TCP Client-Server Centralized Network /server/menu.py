@@ -14,6 +14,8 @@
 #
 ########################################################################################
 
+from datetime import date, datetime
+
 class Menu(object):
     """
     This class handles all the actions related to the user menu.
@@ -31,6 +33,8 @@ class Menu(object):
         :param client: the client object on client side
         """
         self.client = client
+        # print("init")
+        # print(client)
 
     def set_client(self, client):
         self.client = client
@@ -42,6 +46,9 @@ class Menu(object):
         TODO: 3. print the menu in client console.
         :return: VOID
         """
+        # sendself.get_menu()
+        return self.get_menu()
+
         pass
 
     def process_user_data(self):
@@ -55,7 +62,19 @@ class Menu(object):
         if 1 <= option <= 6: # validates a valid option
            # TODO: implement your code here
            # (i,e  algo: if option == 1, then data = self.menu.option1, then. send request to server with the data)
-           pass
+           # if option == 1:
+           #      # get usrlist
+           #  elif option == 2:
+           #      #send a message
+           #  elif option == 3:
+           #      #  get messages
+           #  elif option == 4:
+           #      # create chat room
+           #  elif option == 5:
+           #      # join chatroom
+           #  elif option == 6:
+           #      #disconnect
+                pass
 
     def option_selected(self):
         """
@@ -63,8 +82,8 @@ class Menu(object):
         :return: the option selected.
         """
         option = 0
-        # TODO: your code here.
-        return option
+        # TODO: your code here. 
+
 
     def get_menu(self):
         """
@@ -82,6 +101,16 @@ class Menu(object):
         """
         menu = ""
         # TODO: implement your code here
+        menu = "\n****** TCP CHAT ****** \
+        \n----------------------- \
+        \nOptions Available: \
+        \n1. Get user list \
+        \n2. Send a message\
+        \n3. Get my messages\
+        \n4. Create a new channel\
+        \n5. Chat in a channel with your friends\
+        \n6. Disconnect from server\
+        "
         return menu
 
     def option1(self):
@@ -93,6 +122,7 @@ class Menu(object):
         data = {}
         data['option'] = 1
         # Your code here.
+
         return data
 
     def option2(self):
@@ -101,9 +131,20 @@ class Menu(object):
         :param option:
         :return: a python dictionary with all the data needed from user in option 2.
         """
-        data = {}
+        data = {'option': 0, 'recipient_id': None, 'message': None}
         data['option'] = 2
         # Your code here.
+
+        message = input("Enter your message: ")
+        user_recipent = input("Enter recipent id: ")
+
+        from_user = self.client['username']
+
+        user_note = (str(date.today) + " " + str(datetime.now) + ": " + str(message) + " (from: " + from_user + ")")
+        # print(user_note)
+
+        data = {'option': 2, 'recipient_id': user_recipent, 'message': user_note}
+
         return data
 
     def option3(self):
@@ -148,4 +189,6 @@ class Menu(object):
         data = {}
         data['option'] = 6
         # Your code here.
+
+        # self.client.close()
         return data
