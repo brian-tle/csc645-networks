@@ -196,13 +196,6 @@ class ClientHandler(object):
             #     self.unread_messages.clear()
             #     print("all messages cleared")sg in self.server.secret_messages:
 
-
-
-        # if int(self.client_id) not in users.items():
-        #     print("No messages")
-        # else:
-        #     print(self.client_id + " exists")
-
         return 0
 
     # port == roomid
@@ -216,18 +209,28 @@ class ClientHandler(object):
         "\nChat room created by: " + str(host) + "\nWaiting for other users to join....\n"
         self.server.send(self.clientsocket, init_room)
 
-        # self._join_chat(room_id, host)
+        client_sock, addr = self.clientsocket.accept()
+        print("UserId " + str(addr[1])+"connected to the channel")
+        print("Enter Bye to exit the channel")
+        #client_sock.connect((host, port))
 
         while True:
             try:
-                # messages = self.server.receive()
-                # print("in here")
-                words = input("testing send back: ")
-                self.server.send(self.clientsocket, words)
-
-
+                userMeg = client_sock.recv(4096)
+                userMeg_decode = pickle.loads(userMeg)
+                for x, y in userMeg_decode.items():
+                    print(x+": " + y)
+                user_input = input(str(host) + ": ")
+                user_input = str(user_input)
+                user_name_msg[host] = user_input
+                if "bye" in user_input:
+                    print("You have disconnect server")
+                    break
+                user_encode = pickle.dumps(user_name_msg)
+                client_sock.send(user_encode)
             except:
-                print("Client disconnected!")
+                print("Client Disconnected!")
+                break
         return 0
 
 
