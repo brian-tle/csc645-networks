@@ -94,7 +94,9 @@ class Menu(object):
 
     def _handlemessage(self):
         data = self.client.receive()
-        if data:
+        if data['no_message']:
+            print(data)
+        elif data:
             for messages in data:
                 print(messages)
             # data = {'received': 1}

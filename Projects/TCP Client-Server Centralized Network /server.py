@@ -21,7 +21,7 @@ import threading
 class Server(object):
     MAX_NUM_CONN = 10
 
-    def __init__(self, ip_address='127.0.0.1', port=12005):
+    def __init__(self, ip_address='127.0.0.1', port=12006):
         """
         Class constructor
         :param ip_address:
@@ -66,7 +66,8 @@ class Server(object):
                 Thread(target=self.client_handler_thread, args=(clientsocket, addr)).start()
             except socket.error:
                 #TODO: Handle exceptions
-                clientsocket.close()
+                # clientsocket.close()
+                print("Error in accepting clients")
 
 
     def send(self, clientsocket, data):

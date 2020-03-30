@@ -105,11 +105,12 @@ class ClientHandler(object):
         TODO: send the list of users (clients ids) that are connected to this server.
         :return: VOID
         """
-        users = self.server.nametoid
+        users = self.server.clients
+        user_name = self.server.nametoid
 
         u_list = ""
         for i in users:
-            u_list += str(i) + ":" + str(users[i]) + ", "
+            u_list += str(user_name[i]) + ":" + str(i) + ", "
 
         send_list = "\nUsers in server: " + u_list
         self.server.send(self.clientsocket, send_list)
@@ -141,7 +142,8 @@ class ClientHandler(object):
         :return: VOID
         """
         if self.unread_messages == []:
-            message = "You have no new messages"
+            # pass
+            message = {'no_message': "You have no new messages"}
             self.server.send(self.clientsocket, message)
         else:
             message = self.unread_messages
@@ -172,9 +174,6 @@ class ClientHandler(object):
             data = 0
             self.server.send(self.clientsocket, data)
 
-
-
-        pass
 
     def _join_chat(self, room_id):
         """
@@ -225,25 +224,11 @@ class ClientHandler(object):
         print("delete client")
 
         x = self.client_id
-        # del self.server.clients[]
-        # print(x)
-        # print(self.server.nametoid[self.client_id])
-        # print(self.server.clients[self.client_id])
+
         print(self.server.clients)
 
         del self.server.clients[x]
         print(self.server.clients)
-        # print("delete done")
-        # del self.server.nametoid[self.client_id]
-        # del self.server.clients[self.client_id]
-        # d_list = []
-        # for name, u_id in self.server.clients.items():
-        #     if u_id == self.server.nametoid[self.client_id]:
-        #         d_list.append(name)
-
-        # for i in d_list:
-        #     del self.server.clients[i]
-
 
 
     def _disconnect_from_server(self):
@@ -253,9 +238,11 @@ class ClientHandler(object):
         """
         # print("Disconnect server")
 
+        closing_message = "Client closing. May take a few entries"
+        self.server.send(self.clientsocket, closing_message)
         self.delete_client_data()
         self.clientsocket.close()
-        # print("closed")
+        print("closed")
 
 
 

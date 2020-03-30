@@ -36,7 +36,7 @@ class Client(object):
     def get_client_id(self):
         return self.clientid
 
-    def connect(self, host='127.0.0.1', port=12005):
+    def connect(self, host='127.0.0.1', port=12006):
         """
         TODO: Connects to a server. Implements exception handler if connection is resetted. 
         Then retrieves the cliend id assigned from server, and sets
