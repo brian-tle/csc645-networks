@@ -21,7 +21,7 @@ import threading
 class Server(object):
     MAX_NUM_CONN = 10
 
-    def __init__(self, ip_address='127.0.0.1', port=12006):
+    def __init__(self, ip_address='127.0.0.1', port=12005):
         """
         Class constructor
         :param ip_address:
@@ -35,6 +35,7 @@ class Server(object):
         self.host = ip_address
         self.port = port
         self.serversocket.bind((self.host,self.port))
+        self.chat_rooms = {}
 
 
     def _listen(self):

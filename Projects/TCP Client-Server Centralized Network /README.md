@@ -5,13 +5,19 @@ Please use this README file to provide the following documentation for this proj
 * Your name and student id
 Brian Le
 916970215
+
 * General description of the project (a few sentences)
-python tcp chat 
+The project is a TCP chat server, which accepts clients and sends information back to the client based on client input. Every client connection is a socket that is accepted into the server and all actions between are handshaked, as well as threaded to prevent race conditions between multiple clients. 
+
 * If you used external Python modules/libraries. Provide a requeriments.txt file  
+None
+
 * Python version and compatibility issues (if any). Your project must be run exactelly as in the running instructions described below in this file
 * Attach screenshots or videos to this file to ilustrate how your program works for all the options in the menu. 
+
+
 * A few sentences about all the challenges you found during the implementation of this project and how you overcame them. Please be honest here. 
-Threads / 
+Although it was challenging at first to understand how data is being passed and sent between client and server, how to pickle objects to other directories, as well as how server processes that data, over time it became easier to understand. However, the most difficult part about this project had to be handling errors, threads, and definitely the `Create Chat` and `Join Chat` methods. It was confusing trying to implement sending data to request input then return back in another closed socket.
 
 ## Note that failure to provide the above docs will result in a 30% deduction in your final grade for this project. 
 

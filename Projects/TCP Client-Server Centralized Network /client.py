@@ -13,6 +13,7 @@ import socket
 import pickle
 from builtins import object
 from menu import Menu
+from client_handler import ClientHandler
 
 class Client(object):
     """
@@ -32,11 +33,14 @@ class Client(object):
         self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         self.clientid = 0
+        self.ip = ''
+        self.port = 0
+        self.client_name = ''
 
     def get_client_id(self):
         return self.clientid
 
-    def connect(self, host='127.0.0.1', port=12006):
+    def connect(self, host='127.0.0.1', port=12005):
         """
         TODO: Connects to a server. Implements exception handler if connection is resetted. 
         Then retrieves the cliend id assigned from server, and sets
@@ -44,23 +48,56 @@ class Client(object):
         :param port: 
         :return: VOID
         """
+        self.ip = host
+        self.port = port
         try:
             self.setupconn(host, port)
 
             while True:
                 option_selection = input("\nYour option <enter a number>: ")
-                self.menu.process_user_data(option_selection)
 
-                self.menu.show_menu()
+                if int(option_selection) == 4:
+                    self.chat_room()
+                else:
+                    self.menu.process_user_data(option_selection)
+
+                    self.menu.show_menu()
         except socket.error:
             self.close()
             print("Error client_connection")
+
+    def chat_room(self):
+        try:
+            room_info = input("\nEnter new room id: ")
+            chat_id = input("Enter new chat room id: ")
+
+            new_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            new_socket.bind((self.ip, self.port))
+            new_socket.listen(10)
+            client_sock, addr = new_socket.accept()
+            c_handler = ClientHandler(self, client_sock, addr)
+
+            c_handler._create_chat(new_socket, room_info, chat_id, self.client_name)
+        except:
+            print("No room")
+
+
+        # while True:
+        #     c_m = input(str(self.clientid) + "> ")
+
+        #     if c_m == "bye":
+        #         break
+        #     else:
+        #         print("some message")
+
+        # print("leave")
 
 
     def setupconn(self, host, port):
         print("Server IP address: " + str(host))
         print("Server port: " + str(port))
         user_name = input("Your id key (name): ")
+        self.client_name = user_name
         send_username = {'name': user_name}
         while True:
             try:

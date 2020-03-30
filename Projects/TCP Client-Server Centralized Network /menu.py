@@ -71,13 +71,15 @@ class Menu(object):
                 self._handlemessage()
             elif option == 4:
                 data = self.option4()
+                # data['option_selected'] = 4
+                # data = self.option4create_room()
                 self.client.send(data)
             elif option == 5:
                 print("Menu5")
                 data = self.option5()
                 self.client.send(data)
             elif option == 6:
-                print("menu6")
+                print("Client closing. May take a few tries")
                 data = self.option6()
                 self.client.send(data)
         return data
@@ -94,9 +96,10 @@ class Menu(object):
 
     def _handlemessage(self):
         data = self.client.receive()
-        if data['no_message']:
-            print(data)
-        elif data:
+        # if data['no_message'] == None:
+        #     print(data)
+        # el
+        if data:
             for messages in data:
                 print(messages)
             # data = {'received': 1}
@@ -180,11 +183,39 @@ class Menu(object):
         data['option_selected'] = 4
         # Your code here.
         room_info = input("\nEnter new room id: ")
-        # chatr_id = input("Enter new chat room id: ")
+        chat_id = input("Enter new chat room id: ")
 
         # print(message)
 
         data['room_id'] = room_info
+        data['chat_id'] = chat_id
+        while True:
+            typing = input("something > ")
+            if typing == "bye":
+                break
+
+            data['chat_message'] = typing
+            yield data
+
+        # print(("-"*15) + " Chat Room " + str(chat_id) + " " + ("-"*15))
+        # while True:
+        #     typing = input("Something here")
+        #     data['chat_message'] = typing
+        #     return data
+
+        #     if typing == "bye":
+        #         break
+
+        return data
+
+    def option4create_room(self):
+        data = {}
+        data['option_selected'] = 4
+
+        room_info = input("\nEnter new room id: ")
+        chat_id = input("Enter new chat room id: ")
+        data['room_id'] = room_info
+        data['chat_id'] = chat_id
 
         return data
 

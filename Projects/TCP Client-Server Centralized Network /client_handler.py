@@ -87,7 +87,9 @@ class ClientHandler(object):
                 self._send_messages()
             elif option == 4:
                 room_id = data['room_id']
-                self._create_chat(room_id)
+                chat_id = data['chat_id']
+                c_message = data['chat_message']
+                self._create_chat(room_id, chat_id, c_message)
             elif option == 5:
                 # room_id = data['room_id']
                 # self._join_chat(room_id)
@@ -143,8 +145,9 @@ class ClientHandler(object):
         """
         if self.unread_messages == []:
             # pass
-            message = {'no_message': "You have no new messages"}
+            message = ["You have no new messages"]
             self.server.send(self.clientsocket, message)
+            # print(message)
         else:
             message = self.unread_messages
             self.server.send(self.clientsocket, message)
@@ -152,27 +155,98 @@ class ClientHandler(object):
             print(data)
             self.unread_messages.clear()
 
-    def _create_chat(self, room_id):
+    def _create_chat(self, c_socket, room_id, chat_id, client_name):
         """
         TODO: Creates a new chat in this server where two or more users can share messages in real time.
         :param room_id:
         :return: VOID
         """
         print("Create chat")
+        # menu_obj = Menu()
         # message = ("-"*15) + " Chat Room " + str(room_id) + ("-"*15) #+ \
             # "\nType 'exit' to close the chat room.\nChat room created by: " + str(self.server.nametoid[self.client_id]) + \
             # "\nWaiting for other users to join...")
         # print(host_welcome)
         # self.server.send(self.clientsocket, message)
-        if int(room_id) not in self.server.chatrooms:
-            self.server.chatrooms[int(room_id)]=[]
-            data = "Chatroom with ID: "+ room_id +" created."
-            print(data)
-            self.server.send(self.clientsocket,data)
-            self._join_chat(room_id)
+        # r_id = int(room_id)
+        # c_id = int(chat_id)
+
+        # print(self.server.chat_rooms)
+        # if self.server.chat_rooms.get(r_id) == None:
+        #     self.server.chat_rooms[r_id] = (c_id)
+        #     print(self.server.chat_rooms)
+        #     # self.server.chatrooms[int(room_id)]=[]
+        #     # data = ("-"*15) + " Chat Room " + str(c_id) + " " + ("-"*15)
+        #     # print(data)
+        #     # self.server.send(self.clientsocket,data)
+        #     data = self.server.receive(self.clientsocket)
+        #     print(data)
+
+        client_sock, addr = c_socket.accept()
+        print("UserId " + str(addr[1])+" connected to the channel")
+        print("Enter Bye to exit the channel")
+        #client_sock.connect((host, port))
+        while True:
+            try:
+                userMeg = client_sock.recv(4096)
+                userMeg_decode = pickle.loads(userMeg)
+                for x, y in userMeg_decode.items():
+                    print(x+": " + y)
+                user_input = input(str(client_name) + ": ")
+                user_input = str(user_input)
+                user_name_msg[client_name] = user_input
+                if "bye" in user_input:
+                    print("You have disconnect server")
+                    break
+                user_encode = pickle.dumps(user_name_msg)
+                client_sock.send(user_encode)
+            except:
+                print("Client Disconnected!")
+                break
+            # if data['chat_message'] == 'bye':
+                
+
+            # menu_obj.option4()
+
+            # new_client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            # new_client_socket.bind((self.server.host, self.server.port))
+            # new_client_socket.listen(10)
+            # while True:
+            #     try:
+            #         # chat_socket, addr = new_client_socket.recv(4096)
+                    
+
+
+            # self._join_chat(room_id)
         else:
+            print("Closing chat")
             data = 0
             self.server.send(self.clientsocket, data)
+        # print("Channel Info:")
+        # print("IP Address: " + host)
+        # print("Channel Clientid:" + str(port))
+        # print("Waiting for users....")
+        # client_sock, addr = socket.accept()
+        # print("UserId " + str(addr[1])+"connected to the channel")
+        # print("Enter Bye to exit the channel")
+        # #client_sock.connect((host, port))
+        # while True:
+        #     try:
+        #         userMeg = client_sock.recv(4096)
+        #         userMeg_decode = pickle.loads(userMeg)
+        #         for x, y in userMeg_decode.items():
+        #             print(x+": " + y)
+        #         user_input = input(str(client_name) + ": ")
+        #         user_input = str(user_input)
+        #         user_name_msg[client_name] = user_input
+        #         if "bye" in user_input:
+        #             print("You have disconnect server")
+        #             break
+        #         user_encode = pickle.dumps(user_name_msg)
+        #         client_sock.send(user_encode)
+        #     except:
+        #         print("Client Disconnected!")
+        #         break
 
 
     def _join_chat(self, room_id):
