@@ -81,20 +81,19 @@ server socket. Thus, we have here something similar to the way data is share in 
 
 Downloading data from other peers is a bit more complicated than uploading data. Think about the following use case.
 
-Let's say, like in the uploading example, that three peers P1, P2, and P3 are sharing a file in a swarm, and P1 is a seeder.
-In this case, let's assume that we are P2, and we are trying to download different pieces of the same file from P1 and P3 
-at the same time. We already know that P2 must be running a client socket in order to download data from P1, but at 
-the same time, the same client socket needs to download data from P3. However, that is not possible because 
-P2 client socket is already blocking the port that it is using to connect with P1. We know from other labs that
-a client socket can only connect to one server at the same time. 
+Let's say, like in the uploading example, that three peers P1, P2, and P3 are sharing a file in a swarm, and P1 is a seeder. In this case, let's assume that we are P2, and we are trying to download different pieces of the same file from P1 and P3 
+at the same time. We already know that P2 must be running a client socket in order to download data from P1, but at the same time, the same client socket needs to download data from P3. However, that is not possible because P2 client socket is already blocking the port that it is using to connect with P1. We know from other labs thata client socket can only connect to one server at the same time. 
 
 So, how can we fix this problem? That is your job to figure it out in this lab. Please, use the space below to provide your 
 best guess to solve this problem. You won't be penalized if you do not know the answers, but you'll be if 
 you don't even try to provide an answer. 
 
 ### Your answer here
+To fix the problem we could use routing fowarding / router forwarding to turn the requests into data blocks, then send a block of information back to the requesting client
 
 
+🥺
+👉👈
 
 
  
