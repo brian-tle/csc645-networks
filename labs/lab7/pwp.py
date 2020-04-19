@@ -10,6 +10,24 @@ class PWP(object):
     PSTR = "BitTorrent protocol"
     PSTRLEN = 19
     # TODO: Define ID constants for all the message fields such as unchoked, interested....
+        self.keep_alive = {'len': b'0000'}
+        self.choke = {'len': b'0001', 'id': 0}
+        
+        self.unchoke = {'len': b'0001', 'id': 1}
+
+        self.interested = {'len': b'0001', 'id': 2}
+
+        self.not_interested = {'len': b'0001', 'id': 3}
+
+        self.have = {'len': b'0005', 'id': 4, 'piece_index': None}
+
+        self._bitfield = {'len': b'0013' + self.X_BITFIELD_LENGTH, 'id': 5, 'bitfield': []}
+
+        self.request = {'len': b'0013', 'id': 6, 'index': None, 'begin': None, 'length': None}
+
+        self.piece = {'len': b'0009' + self.X_PIECE_LENGTH, 'id': 7, 'index': None, 'begin': None, 'block': None}
+
+        self.cancel = {'len': b'0013', 'id': 8, 'index': None, 'begin': None, 'length': None}
 
     def __init__(self):
         """
@@ -23,6 +41,7 @@ class PWP(object):
         :param options:
         :return: the handshake message
         """
+        handshake = {'ptrstrlen': 0, }
         pass
 
     def message(self, len, message_id, payload):
