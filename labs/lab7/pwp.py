@@ -10,6 +10,11 @@ class PWP(object):
     PSTR = "BitTorrent protocol"
     PSTRLEN = 19
     # TODO: Define ID constants for all the message fields such as unchoked, interested....
+
+    def __init__(self):
+        """
+        Empty constructor
+        """
         self.keep_alive = {'len': b'0000'}
         self.choke = {'len': b'0001', 'id': 0}
         
@@ -29,20 +34,13 @@ class PWP(object):
 
         self.cancel = {'len': b'0013', 'id': 8, 'index': None, 'begin': None, 'length': None}
 
-    def __init__(self):
-        """
-        Empty constructor
-        """
-        pass
-
     def handshake(self, info_hash, peer_id, pstrlen=PSTRLEN, pstr=PSTR):
         """
         TODO: implement the handshake
         :param options:
         :return: the handshake message
         """
-        handshake = {'ptrstrlen': 0, }
-        pass
+        handshake = {'ptrstrlen': pstrlen, 'pstr': pstr, 'reserved': [], 'info_hash': info_hash, 'peer_id': peer_id}
 
     def message(self, len, message_id, payload):
         """
@@ -52,6 +50,7 @@ class PWP(object):
         :param payload:
         :return: the message
         """
-        pass
+        msg = Message()
+
 
 
