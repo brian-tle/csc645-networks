@@ -42,6 +42,8 @@ class PWP(object):
         """
         handshake = {'ptrstrlen': pstrlen, 'pstr': pstr, 'reserved': [], 'info_hash': info_hash, 'peer_id': peer_id}
 
+        return handshake
+
     def message(self, len, message_id, payload):
         """
         TODO: implement the message
@@ -51,6 +53,8 @@ class PWP(object):
         :return: the message
         """
         msg = Message()
+
+        pass
 
 
 
