@@ -39,6 +39,7 @@ class Peer (Server):
         """
         try:
             pass # your code here
+            
         except:
             pass # handle exceptions here
 
@@ -53,5 +54,12 @@ class Peer (Server):
         :param peers: list of peer´s ip addresses in the network
         :return: VOID
         """
-        pass # your code here
+        # pass # your code here
+        for port in range(self.CLIENT_MIN_PORT_RANGE, self.CLIENT_MAX_PORT_RANGE + 1):
+            connect_address = len(peers_ip_addresses) - 1
+            if port > (self.CLIENT_MIN_PORT_RANGE + connect_address)
+                break
+            else:
+                peer_slot = (port % 100) - 1
+                self._connect_to_peer(port, peers_ip_addresses[peer_slot])
 
