@@ -1,7 +1,86 @@
 Grade:
 ```
-Passed
+Not Passed
 ```
+Grader Comments:
+```
+Error message detected:
+
+
+
+25 != 1
+
+Expected :1
+Actual   :25
+<Click to see difference>
+
+Traceback (most recent call last):
+  File "/Applications/PyCharm CE.app/Contents/helpers/pycharm/teamcity/diff_tools.py", line 32, in _patched_equals
+    old(self, first, second, msg)
+  File "/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 852, in assertEqual
+    assertion_func(first, second, msg=msg)
+  File "/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 845, in _baseAssertEqual
+    raise self.failureException(msg)
+AssertionError: 1 != 25
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 59, in testPartExecutor
+    yield
+  File "/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 628, in run
+    testMethod()
+  File "/Users/tyyu/Desktop/Lab7/CSC645 Computer Networks Spring 2020-04-27-2020-02-06-24/brian-tle/labs/lab7/message.py", line 226, in test_init_bitfield
+    self.assertEqual(size_bitfield, 25)
+
+
+Error
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 59, in testPartExecutor
+    yield
+  File "/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 628, in run
+    testMethod()
+  File "/Users/tyyu/Desktop/Lab7/CSC645 Computer Networks Spring 2020-04-27-2020-02-06-24/brian-tle/labs/lab7/message.py", line 231, in test_is_block_missing
+    self.message._bitfield['bitfield'][piece_index][block_index] = True  # block is set to 1 (not missing)
+IndexError: list index out of range
+
+
+Error
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 59, in testPartExecutor
+    yield
+  File "/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 628, in run
+    testMethod()
+  File "/Users/tyyu/Desktop/Lab7/CSC645 Computer Networks Spring 2020-04-27-2020-02-06-24/brian-tle/labs/lab7/message.py", line 236, in test_is_piece_missing
+    self.message._bitfield['bitfield'][piece_index] = b'11111111'  # sets piece index 19 to not missing
+IndexError: list assignment index out of range
+
+
+Error
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 59, in testPartExecutor
+    yield
+  File "/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 628, in run
+    testMethod()
+  File "/Users/tyyu/Desktop/Lab7/CSC645 Computer Networks Spring 2020-04-27-2020-02-06-24/brian-tle/labs/lab7/message.py", line 241, in test_next_block_missing
+    self.message._bitfield['bitfield'][piece_index][0] = True  # not missing
+IndexError: list index out of range
+
+
+
+Ran 4 tests in 0.010s
+
+FAILED (failures=1, errors=3)
+
+Process finished with exit code 1
+
+Assertion failed
+
+Assertion failed
+
+Assertion failed
+```
+
 
 # Lab 7, P2P: The BitTorrent Peer Wire Protocol 
 In this lab, you´ll create a Python class that implements the services provided by the Peer Wire Protocol. 
