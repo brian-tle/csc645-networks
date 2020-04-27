@@ -8,6 +8,9 @@ and uploading process in the network, and also which challenges you may encounte
 when implementing those functionalities. 
 """
 from server import Server
+from threading import Thread
+import threading
+
 class Peer (Server):
 
     SERVER_PORT = 5000
@@ -37,11 +40,18 @@ class Peer (Server):
                                 the client needs to connect to
         :return: VOID
         """
+        # lock = threading.Lock()
         try:
-            pass # your code here
-            
+            # pass # your code here
+            # Thread in here
+
+            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            client.bind((peer_ip_address, client_port_to_bind))
+            client.listen(10)
+
         except:
-            pass # handle exceptions here
+            # pass # handle exceptions here
+            print("Error in _connect_to_peer")
 
     def connect(self, peers_ip_addresses):
         """
@@ -61,5 +71,9 @@ class Peer (Server):
                 break
             else:
                 peer_slot = (port % 100) - 1
-                self._connect_to_peer(port, peers_ip_addresses[peer_slot])
-
+                try:
+                    Thread(target=self._connect_to_peer, args=(port, peers_ip_addresses[peer_slot])).start()
+                    # self._connect_to_peer(port, peers_ip_addresses[peer_slot])
+                except:
+                    print("Port: " + str(self.port) + " failed with IP: " + str(peers_ip_addresses[peer_slot]))
+                    #Tries then if fail just pass Port+=1
