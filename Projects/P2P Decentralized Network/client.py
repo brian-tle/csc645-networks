@@ -3,9 +3,9 @@
 # Date: 02/03/2020
 # Lab3: TCP Client Socket
 # Goal: Learning Networking in Python with TCP sockets
-# Student Name:
-# Student ID:
-# Student Github Username:
+# Student Name: Brian Le
+# Student ID: 916970215
+# Student Github Username: brian-tle
 # Instructions: Read each problem carefully, and implement them correctly. Your grade in labs is based on passing
 #               all the unit tests provided.
 #               No partial credit will be given. Labs must be completed in class, and must be commited to your
@@ -50,19 +50,17 @@ class Client(object):
         data = {'student_name': self.student_name, 'github_username': self.github_username, 'sid': self.sid}
 
         #TODO  3. send the above data to the server. using the send method which has been already implemented for you.
-
         self.client.connect((server_ip_address, server_port))
+        self.set_client_id()
+        # self.send('Hello!!!')
         while True: # client is put in listening mode to retrieve data from server.
             data = self.receive()
 
-            if data['clientid']:
-                self.set_client_id()
-                self.send(data)
-
-            if not data:
-                break
-            else:
+            self.send(data)
+            if data:
                 print(data)
+            else:
+                break
 
             # do something with the data
         self.close()
@@ -101,3 +99,12 @@ class Client(object):
         :return: VOID
         """
         self.client.close()
+
+    ##NEW
+    def bind(self, ip, port):
+        self.client.bind((ip, port))
+
+#TESTING PURPOISEs
+# if __name__ == '__main__':
+#     client = Client()
+#     client.connect('0.0.0.0', 5000)

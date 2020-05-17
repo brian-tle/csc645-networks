@@ -1,0 +1,3 @@
+To decode bencode
+* pip3 install torrent_parser
+from Jose's slack message on how to decode

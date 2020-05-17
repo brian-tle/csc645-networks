@@ -7,7 +7,7 @@ Brian Le
 916970215
 
 * General description of the project (a few sentences)
-–––
+A decentralized Peer to Peer (P2P) bittorrent  protocol network that connects clients to download a .torrent file. It has a tracker than checks the status of the clients (peers) of whether they're interested, not interested, choked, etc. These peers simultaniously download their missing pieces of the file from eachother as each peer holds a different piece of the data. Also a tracker manages whether a peer is looking for a specific file, then throws that peer into the swarm (collection of peers sharing that file) to join the downloading / uploading party
 
 * If you used external Python modules/libraries. Provide a requeriments.txt file  
 
@@ -19,6 +19,9 @@ Python3.8
 
 * A few sentences about all the challenges you found during the implementation of this project and how you overcame them. Please be honest here. 
 –––
+Starting off, not sure what to do. Probably spent an extra 30~ hours just rereading documentation and how P2P networks work, but implementing and coding it was just too difficult and above my head.
+For the first few days, I did not know what to do with tracker.py. I know it handles the table, connected clients, and assigns swarms, but wasn't sure how to implement, also I was readjusting to making classes in python since I was making many syntax errors. 
+Then I was trying to figure out how to  
 
 
 ## Note that failure to provide the above docs will result in a 30% deduction in your final grade for this project. 

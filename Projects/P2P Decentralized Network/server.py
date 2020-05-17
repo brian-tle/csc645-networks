@@ -3,9 +3,9 @@
 # Date: 02/03/2020
 # Lab3: TCP Server Socket
 # Goal: Learning Networking in Python with TCP sockets
-# Student Name:
-# Student ID:
-# Student Github Username:
+# Student Name: Brian Le
+# Student ID: 916970215
+# Student Github Username: brian-tle
 # Lab Instructions: No partial credit will be given. Labs must be completed in class, and must be committed to your
 #               personal repository by 9:45 pm.
 # Program Running instructions:
@@ -18,6 +18,7 @@
 import socket
 import pickle
 from threading import Thread
+from tracker import Tracker
 
 class Server(object):
     """
@@ -29,7 +30,8 @@ class Server(object):
     """
     MAX_NUM_CONN = 10 # keeps 10 clients in queue
 
-    def __init__(self, host="127.0.0.1", port = 12000):
+    # host 0.0.0.0
+    def __init__(self, host='0.0.0.0', port = 5000):
         """
         Class constructor
         :param host: by default localhost. Note that '0.0.0.0' takes LAN ip address.
@@ -37,9 +39,8 @@ class Server(object):
         """
         self.host = host
         self.port = port
-        # self.serversocket = None # TODO: create the server socket
-        self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
+        self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TODO: create the server socket
+        self.serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     def _bind(self):
         """
@@ -59,9 +60,8 @@ class Server(object):
             self._bind()
             # your code here
             self.serversocket.listen(self.MAX_NUM_CONN)
-            print("Listenning at " +  str(self.host) +  "/" + str(self.port))
+            print("Server listening at " + str(self.host) + "/" + str(self.port))
         except:
-            print("Error in _listen")
             self.serversocket.close()
 
     def _handler(self, clienthandler):
@@ -75,15 +75,16 @@ class Server(object):
              # TODO: if no data, break the loop
              # TODO: Otherwise, send acknowledge to client. (i.e a message saying 'server got the data
              # pass  # remove this line after implemented.
-            try:
+             try:
                 data = self.receive(clienthandler)
-                if not data:
-                    break
+                if data:
+                    print("Server got the data: " + str(data))
                 else:
-                    print(data)
-                    self.send(clienthandler, 'Server got the data')
-            except:
-            	print("handler")
+                    break
+
+             except Exception as e:
+                print("Error receving by server: " + str(e))
+                break
 
     def _accept_clients(self):
         """
@@ -92,19 +93,20 @@ class Server(object):
         """
         while True:
             try:
-               clienthandler, addr = self.serversocket.accept()
-               # TODO: from the addr variable, extract the client id assigned to the client
-               # TODO: send assigned id to the new client. hint: call the send_clientid(..) method
+                clienthandler, addr = self.serversocket.accept()
+                # TODO: from the addr variable, extract the client id assigned to the client
+                # TODO: send assigned id to the new client. hint: call the send_clientid(..) method
 
-               server_ip = addr[0]
-               client_id = addr[1]
-               self._send_clientid(clienthandler, client_id)
+                _clientid = addr[1]
+                # print(_clientid)
+                self._send_clientid(clienthandler, _clientid)
 
-               self._handler(clienthandler) # receive, process, send response to client.
-            except:
-               # handle exceptions here
-               print("Error in _accept_clients")
-               # pass #remove this line after implemented.
+                self._handler(clienthandler) # receive, process, send response to client.
+            except Exception as e:
+                # handle exceptions here
+                print("Error in accepting client: " + str(e))
+                break
+                # pass #remove this line after implemented.
 
     def _send_clientid(self, clienthandler, clientid):
         """
@@ -114,9 +116,9 @@ class Server(object):
         :return: VOID
         """
         # pass  # remove this line after implemented.
-        data = {'clientid': clientid}
-        send_data = pickle.dumps(data)
-        clienthandler.send(send_data)
+        client_id = {'clientid': clientid}
+
+        self.send(clienthandler, client_id)
 
 
     def send(self, clienthandler, data):
@@ -128,9 +130,8 @@ class Server(object):
         :return: VOID
         """
         # pass #remove this line after implemented.
-        message = data
-        serialize_data = pickle.dumps(message)
-        clienthandler.send(serialize_data)
+        serialized_data = pickle.dumps(data)
+        clienthandler.send(serialized_data)
 
     def receive(self, clienthandler, MAX_ALLOC_MEM=4096):
         """
@@ -138,11 +139,11 @@ class Server(object):
         :param MAX_ALLOC_MEM: default set to 4096
         :return: the deserialized data.
         """
-        receiving_data = clienthandler.recv(MAX_ALLOC_MEM)
-        deserialized_data = pickle.loads(receiving_data)
-
-        return deserialized_data
         # return None #change the return value after implemente.
+        r_data = clienthandler.recv(MAX_ALLOC_MEM)
+        deserializer = pickle.loads(r_data)
+
+        return deserializer
 
     def run(self):
         """
@@ -150,5 +151,10 @@ class Server(object):
         Run the server.
         :return: VOID
         """
-        self._listen()
-        self._accept_clients()
+        try:
+            self._listen()
+            self._accept_clients() 
+        except KeyboardInterrupt:
+            print("stopped")
+        except:
+            print("error in server running")
