@@ -20,7 +20,7 @@ import uuid
 
 class Peer(Client, Server):
     DEFAULT_SERVER_PORT = 5000
-    MIN_PORT = 5001
+    MIN_PORT = 5004
     MAX_PORT = 5010
 
     def __init__(self, server_ip_address = '0.0.0.0'):
@@ -35,7 +35,7 @@ class Peer(Client, Server):
 
 
     def peer_client_connector(self, client_port_to_bind, peer_ip_address, peer_port=DEFAULT_SERVER_PORT):
-        print("\nPeer: " + str(self.id) + " started running its client")
+        print("\nPeer: " + str(self.peer_id) + " started running its client\n")
         client = Client()
         # tracker = Tracker(self.server)
         # print(client_port_to_bind)
@@ -44,13 +44,12 @@ class Peer(Client, Server):
             # binds the client to the ip address assigned by LAN
             client.bind('0.0.0.0', client_port_to_bind)  # note: when you bind, the port bound will be the client id
             self.list_of_clienthandlers.append(client)
-            print("\nList of clients: ")
+
+            print("List of clients: ")
             print(self.list_of_clienthandlers)
-            print("client port: " + str(client_port_to_bind))
-            print("peer ip: " + str(peer_ip_address[0]))
-            print("peer port: " + str(peer_port))
+            print("client connection: " +  str(peer_ip_address[0]) + ":" +str(client_port_to_bind))
+            # print("peer port: " + str(peer_port))
             connect_args = (peer_ip_address[0], peer_port)
-            # client.connect(peer_ip_address[0], peer_port)
             thread.Thread(target=client.connect, args=(peer_ip_address[0], peer_port)).start()
             # Thread(target=client.connect(), args=((peer_ip_address[0], peer_port))).start()  # threads server
             # tracker.broadcast_not_send()
@@ -80,11 +79,10 @@ class Peer(Client, Server):
         try:
             # peer.server.run()
             # self.server.this
-            print(thread.active_count())
+            # print(thread.active_count())
             # self.run()
-
-            print("Peer: " + str(self.id()) + " started running its server")
-            thread.Thread(target=self.server.run, daemon=True).start()
+            print("Peer: " + str(peer.peer_id) + " started running its server")
+            thread.Thread(target=self.run, daemon=True).start()
 
             self.connect_to_all_peers(ip_addresses)
         except Exception as e:
@@ -104,11 +102,14 @@ class Peer(Client, Server):
         # num_pieces = tracker.get_amount_of_pieces()
         # pwp = PWP(num_pieces)
 
+    def peer_client_send_handshake(self, handshake):
+        self.client.send(handshake)
+
 if __name__ == '__main__':
     peer = Peer()
     tracker = Tracker(peer.server)
     ip_s = tracker.get_peers_from_announce()
-    # peer.peer_runner(ip_s)
+    peer.peer_runner(ip_s)
 
     num_pieces = tracker.get_amount_of_pieces()
     pwp = PWP(num_pieces)
@@ -118,7 +119,7 @@ if __name__ == '__main__':
     hash.update(repr(peer.peer_info_hash).encode('utf-8'))
     peer.peer_info_hash = hash.hexdigest()
     # print(hash)
-    # print(peer.peer_info_hash)
-    # print(peer.peer_info_hash)
-    
-    pwp.handshake(peer.peer_info_hash, peer.peer_id)
+    # print(peer.peer_info_hash)    
+    send_handshake = pwp.handshake(peer.peer_info_hash, peer.peer_id)
+
+    peer.peer_client_send_handshake(send_handshake)

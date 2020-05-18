@@ -34,7 +34,7 @@ class Tracker():
 			# for clients in clienthandlers:
 			# 	# print(clients)
 			# 	self.server.send(clients, data)
-			self.server.send(client,data)
+			self.server.send(client, data)
 		except Exception as e:
 			print("Error in broadcasting peer_list: " + str(e))
 
@@ -52,7 +52,7 @@ class Tracker():
 		announce_list = torrent_data['announce-list']
 		info = torrent_data['info']
 
-		print('\nannounce: ' + str(announce))
+		print('announce: ' + str(announce))
 		print(announce_list)
 		print("Comment: " + torrent_data['comment'])
 		print("Created by: " + torrent_data['created by'])
