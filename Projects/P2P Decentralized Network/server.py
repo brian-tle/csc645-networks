@@ -17,8 +17,9 @@
 # don't modify this imports.
 import socket
 import pickle
+
 from threading import Thread
-from tracker import Tracker
+# from tracker import Tracker
 
 class Server(object):
     """
@@ -57,6 +58,7 @@ class Server(object):
         :return: VOID
         """
         try:
+            print("hewwo")
             self._bind()
             # your code here
             self.serversocket.listen(self.MAX_NUM_CONN)
@@ -152,9 +154,13 @@ class Server(object):
         :return: VOID
         """
         try:
+            # print("hello")
             self._listen()
             self._accept_clients() 
         except KeyboardInterrupt:
             print("stopped")
         except:
             print("error in server running")
+
+    def test_func(self):
+        print("testing")

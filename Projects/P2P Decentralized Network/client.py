@@ -16,6 +16,8 @@
 import socket
 import pickle
 
+from threading import Thread
+
 
 ######################################## Client Socket ###############################################################3
 """
@@ -48,22 +50,26 @@ class Client(object):
 
         # data dictionary already created for you. Don't modify.
         data = {'student_name': self.student_name, 'github_username': self.github_username, 'sid': self.sid}
-
+        print("hello?")
         #TODO  3. send the above data to the server. using the send method which has been already implemented for you.
-        self.client.connect((server_ip_address, server_port))
-        self.set_client_id()
-        # self.send('Hello!!!')
-        while True: # client is put in listening mode to retrieve data from server.
-            data = self.receive()
-
+        try:
+            self.client.connect((server_ip_address, server_port))
+            self.set_client_id()
             self.send(data)
-            if data:
-                print(data)
-            else:
-                break
+            # self.send('Hello!!!')
+            while True: # client is put in listening mode to retrieve data from server.
+                data = self.receive()
+                if data:
+                    print(data)
+                else:
+                    break
 
-            # do something with the data
-        self.close()
+                # do something with the data
+            self.close()
+        except KeyboardInterrupt:
+            print("KeyboardInterrupt")
+        except Exception as e:
+            print(e)
 
     def send(self, data):
         """
