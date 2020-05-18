@@ -58,7 +58,7 @@ class Server(object):
         :return: VOID
         """
         try:
-            print("hewwo")
+            # print("hewwo")
             self._bind()
             # your code here
             self.serversocket.listen(self.MAX_NUM_CONN)
@@ -103,7 +103,8 @@ class Server(object):
                 # print(_clientid)
                 self._send_clientid(clienthandler, _clientid)
 
-                self._handler(clienthandler) # receive, process, send response to client.
+                Thread(target=_self.handler, args=(clienthandler)).start()
+                # self._handler(clienthandler) # receive, process, send response to client.
             except Exception as e:
                 # handle exceptions here
                 print("Error in accepting client: " + str(e))

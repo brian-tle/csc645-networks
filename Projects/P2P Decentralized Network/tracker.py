@@ -56,8 +56,6 @@ class Tracker():
 		print(announce_list)
 		print("Comment: " + torrent_data['comment'])
 		print("Created by: " + torrent_data['created by'])
-		# y = info['length'] / info['piece length']
-		# print(math.ceil(y))
 		print("info['piece length']: " + str(info['piece length']))
 		print("info['length']: " + str(info['length']))
 		print()
@@ -80,7 +78,8 @@ class Tracker():
 
 		return pieces
 
-# if __name__ == "__main__":
-# 	tracker = Tracker()
-# 	tracker.add_to_peer_table(tracker.get_peers_from_announce())
-# 	print(tracker.peer_table)
+	def get_info_unhashed(self):
+		torrent_data = self.decode_torrent("age.torrent")
+		info = torrent_data['info']
+
+		return info

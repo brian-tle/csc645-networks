@@ -50,7 +50,7 @@ class Client(object):
 
         # data dictionary already created for you. Don't modify.
         data = {'student_name': self.student_name, 'github_username': self.github_username, 'sid': self.sid}
-        print("hello?")
+        # print("hello?")
         #TODO  3. send the above data to the server. using the send method which has been already implemented for you.
         try:
             self.client.connect((server_ip_address, server_port))

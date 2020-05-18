@@ -21,7 +21,8 @@ Python3.8
 –––
 Starting off, not sure what to do. Probably spent an extra 30~ hours just rereading documentation and how P2P networks work, but implementing and coding it was just too difficult and above my head.
 For the first few days, I did not know what to do with tracker.py. I know it handles the table, connected clients, and assigns swarms, but wasn't sure how to implement, also I was readjusting to making classes in python since I was making many syntax errors. 
-Then I was trying to figure out how to  
+While trying to get server / client running and threaded for TCP connections in peer, I ran into a lot of threading issues with the libraries. After that, it was formatting how I wanted the Tracker.py to be formatted and how it tracks. Since the tracker tracks who in what storm, I'm not sure how to implement it besides parsing the torrent file to see who is trying to download which file.
+I brought back some of the labs (7/8/9) for the PWP/message classes for handshake and managing the sent data between peers.
 
 
 ## Note that failure to provide the above docs will result in a 30% deduction in your final grade for this project. 
