@@ -13,7 +13,7 @@ class Peer (Server):
 
     def __init__(self, server_ip_address):
         Server.__init__(server_ip_address, self.SERVER_PORT)
-        self.routing_table = ()
+        self.routing_table = []
 
 
     def run_server(self):

@@ -1,23 +1,19 @@
-"""
-Author: Jose Ortiz
-File: message.py
-"""
-
 import math
 from bitarray import bitarray
 
 
 class Message:
     """
-     This class contains methods that implement the  peer-wire-protocol message
-     This protocol is creates a secure and symetric comunication between peers in P2P networks
-     Note: this class is sending blocks of data not pieces.
+    This class represents a basic implementation of the Peer Wire Protocol (PWP) used by BitTorrent protocol
+    to provide reliable communication methods between peers in the same P2P network
+    USAGE:
+        message = Message()
+        message.init_bitfield()
     """
 
+    # constants
     X_BITFIELD_LENGTH = b'0000'
     X_PIECE_LENGTH = b'0000'
-
-    # vhprogressbar
 
     def __init__(self):
         # A keep-alive message must be sent to maintain the connection alive if no command
@@ -45,7 +41,6 @@ class Message:
         # Spare bits at the end are set to zero.
         # [[0,0,0,0,0,0,0,0],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1]]
         self._bitfield = {'len': b'0013' + self.X_BITFIELD_LENGTH, 'id': 5, 'bitfield': []}
-
         # The request message is fixed length, and is used to request a block.
         # The payload contains the following information:
         #     index: integer specifying the zero-based piece index
@@ -102,38 +97,35 @@ class Message:
         #            intervals. An announcement using started is sent when a download first begins, and one using
         #            completed is sent when the download is complete. No completed is sent if the file was complete
         #            when started. Downloaders send an announcement using stopped when they cease downloading.
-        self.tracker = {'torrent_info_hash': -1, 'peer_id': -1, "ip": -1, 'port': -1, 'uploaded': -1,
+        self.tracker = {'id': 10, 'torrent_info_hash': -1, 'peer_id': -1, "ip": -1, 'port': -1, 'uploaded': -1,
                         'downloaded': -1, 'left': -1, 'event': -1}
 
     #############################  Bitfield Methods ####################################################
 
     def init_bitfield(self, num_pieces):
         """
-        TODO: Initializes the bitfield with predefined values, all bits are set to 1 missing pieces
+        Initializes the bitfield with predefined values
         :param num_pieces: the number of pieces defined in the .torrent file
         :return: Void
         """
         size_bitfield = math.ceil(num_pieces / 8)
         spare_bits = (8 * size_bitfield) - num_pieces
-        piece = bitarray(8)
-        piece.setall(1)
-
-        # Creates an 8 bit array of 1s then appends it to master
-        x = []
-        for i in range(0,8):
-            x.append(piece)
-        self._bitfield['bitfield'].append(x)
+        for i in range(size_bitfield - 1):
+            piece_bitfield = bitarray(8)
+            piece_bitfield.setall(0)
+            self._bitfield['bitfield'].append(piece_bitfield)
+        spare_piece_bitfield = bitarray(spare_bits)
+        spare_piece_bitfield.setall(0)
+        self._bitfield['bitfield'].append(spare_piece_bitfield)
 
     def get_bitfield(self):
         """
-        get the bitfield
         :return: the bitfield
         """
         return self._bitfield
 
     def get_bitfield_piece(self, piece_index):
         """
-        get a bitfield piece
         :param piece_index:
         :return: the piece bitfield located at index 'piece_index'
         """
@@ -141,63 +133,130 @@ class Message:
 
     def get_bitfield_block(self, piece_index, block_index):
         """
-        get a bitfield block
         :param piece_index:
         :param block_index:
-        :return:The block requested
+        :return:
         """
         return self._bitfield['bitfield'][piece_index][block_index]
 
     def is_block_missing(self, piece_index, block_index):
         """
-        TODO: Check if there is a missing block in a specific piece 
         :param piece_index:
         :param block_index:
-        :return: True if the block is missing. Otherwise, false
+        :return: True if the block is missing. Otherwise, returns False
         """
-        bit_block = self.get_bitfield_block(piece_index, block_index)
-
-        for bit in bit_block:
-            if bit == b'1':
-                return True
-        return False
+        if self._bitfield['bitfield'][piece_index][block_index]:
+            return False
+        return True
 
     def is_piece_missing(self, piece_index):
         """
-        TODO: check if a piece in the bitfield is missing
         :param piece_index:
-        :return: 
+        :return: True if the piece is missing. Otherwise, returns False
         """
-        #self.bitfield*
-        # for bit in
-        # ask jose. This only takes piece_index, how does it know which block_index to check
-        return 0
+        piece = self._bitfield['bitfield'][piece_index]
+        for block_index in range(len(piece)):
+            if self.is_block_missing(piece_index, block_index):
+                return True
+        return False
 
     def next_missing_block(self, piece_index):
         """
-        TODO: find and return the next missing block
         :param piece_index:
-        :return: the next missing block
+        :return: the next missing block index
         """
-        return 0
+        piece = self._bitfield['bitfield'][piece_index]
+        for block_index in range(len(piece)):
+            if self.is_block_missing(piece_index, block_index):
+                return block_index
+        return -1
 
     def next_missing_piece(self):
         """
-        TODO: find and return the next missing piece. 
-        :return: the next missing piece
+        :return: the next missing piece index
         """
         for piece_index in range(len(self._bitfield['bitfield'])):
-            piece = self._bitfield['bitfield'][piece_index]
-            for block in piece:
-                if block == b'1':
-                    return piece_index
-        return False
+            if self.is_piece_missing(piece_index):
+                return piece_index
+        return -1
 
     def set_block_to_completed(self, piece_index, block_index):
         """
-        Sets the block to completed
         :param piece_index:
         :param block_index:
         :return:
         """
-        self._bitfield['bitfield'][piece_index][block_index] = 0
+        self._bitfield['bitfield'][piece_index][block_index] = True
+
+    # getters and setters with payload
+
+    def get_have(self, payload):
+        """
+
+        :param payload:
+        :return:
+        """
+        piece_index = payload['piece_index']
+        self.have['piece_index'] = piece_index
+        return self.have
+
+    def get_request(self, payload):
+        """
+
+        :param payload:
+        :return:
+        """
+        self.request['index'] = payload['index']
+        self.request['begin'] = payload['begin']
+        self.request['length'] = payload['begin']
+        return self.request
+
+    def get_piece(self, payload, len_hex=b'0009'):
+        """
+
+        :param len_hex:
+        :param payload:
+        :return:
+        """
+        self.piece['index'] = payload['index']
+        self.piece['begin'] = payload['begin']
+        self.piece['block'] = payload['block']
+        if len_hex > b'0009':
+            self.piece['len'] = len_hex
+        return self.piece
+
+    def get_cancel(self, payload):
+        """
+
+        :param payload:
+        :return:
+        """
+        self.cancel['index'] = payload['index']
+        self.cancel['begin'] = payload['begin']
+        self.cancel['length'] = payload['length']
+        return self.cancel
+
+    def get_port(self, payload):
+        """
+
+        :param payload:
+        :return:
+        """
+        self.port['listen_port'] = payload['listen_port']
+        return self.port
+
+    def get_tracker(self, payload):
+        """
+
+        :param payload:
+        :return:
+        """
+        self.tracker['torrent_info_hash'] = payload['torrent_info_hash']
+        self.tracker['peer_id'] = payload['peer_id']
+        self.tracker['ip'] = payload['ip']
+        self.tracker['port'] = payload['port']
+        self.tracker['uploaded'] = payload['uploaded']
+        self.tracker['downloaded'] = payload['downloaded']
+        self.tracker['left'] = payload['left']
+        self.tracker['event'] = payload['event']
+        return self.tracker
