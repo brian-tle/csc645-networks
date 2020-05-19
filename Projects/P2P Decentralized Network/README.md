@@ -7,7 +7,8 @@ Brian Le
 916970215
 
 * General description of the project (a few sentences)
-A decentralized Peer to Peer (P2P) bittorrent  protocol network that connects clients to download a .torrent file. It has a tracker than checks the status of the clients (peers) of whether they're interested, not interested, choked, etc. These peers simultaniously download their missing pieces of the file from eachother as each peer holds a different piece of the data. Also a tracker manages whether a peer is looking for a specific file, then throws that peer into the swarm (collection of peers sharing that file) to join the downloading / uploading party
+
+A decentralized Peer to Peer (P2P) bittorrent network that connects clients to download a file from eachother. It contains a tracker that tracks the status of the peers (interested/not interested/choked/etc) and what file they're looking for. These peers can simultaniously download pieces of a file from other peers as long as the other has a piece that they do not have. Peers that are looking for a specific file are put into a swarm (peers looking for the same file) by the tracker.
 
 * If you used external Python modules/libraries. Provide a requeriments.txt file  
 
@@ -15,6 +16,7 @@ A decentralized Peer to Peer (P2P) bittorrent  protocol network that connects cl
 Python3.8.2
 
 * Clear and specific instructions about how to run your project. If your project does not run or contains errors, you'll get a 0 in the project no matter how much work you put on it. So, test your code properly and make sure that it runs without errors.
+
 To run the project, you must run only the peer.py file. The peer.py file is the main class
 
 * A few sentences about all the challenges you found during the implementation of this project and how you overcame them. Please be honest here. 
@@ -24,8 +26,15 @@ For the first few days, I did not know what to do with tracker.py. I know it han
 
 While trying to get server / client running and threaded for TCP connections in peer, I ran into a lot of threading issues with the libraries. After that, it was formatting how I wanted the Tracker.py to be formatted and how it tracks. Since the tracker tracks who in what storm, I'm not sure how to implement it besides parsing the torrent file to see who is trying to download which file.
 
-I brought back some of the labs (7/8/9) for the PWP/message classes for handshake and managing the sent data between peers.
+I brought back some of the labs (7/8/9) for the PWP/message classes for handshake and managing the sent data between peers. I got to doing my attempt at sending the infohash to the other clients, which where I would then make a check_info_hash to see if the info_hashes matched, then somehow added them to a swarm (in a swarm class) together with the tracker.
 
+For the download portion, I'm not too sure on how I would have implemented it. Break the info_pieces into bits, put them in a bitfield, then send the block / pieces. The logic of how it should send and check if other peers have the file make decent sense, but implementing not sure at all. Also, to turn a peer into a seeder I would be at lost too. 
+
+Overall I thought this project was fun! But insanely challenging at the current level we got to. Over summer i'll be trying to implement TCP / P2P in projects and this was a good start on understanding it!!
+
+Thanks for the three semesters Jose! They were all fun, insightful, and helped me find some weak points and where I need to improve at, and now i'm graduating!!! (hopefully)
+
+Bests!
 
 
 ## Note that failure to provide the above docs will result in a 30% deduction in your final grade for this project. 
@@ -108,11 +117,3 @@ The peer class is the main class of this network. It must to have the following 
 
 The due data of this project is on the last day of the semester for this class. After you complete and test your project, send an email to the class instructor jortizco@sfsu.edu with the link to the source code of your project in the master branch of your class repository 
 the subject of the email must be: CSC545-01 Computer Networks: P2P Project Link
-  
-  
- 
-
-
-    
-
-

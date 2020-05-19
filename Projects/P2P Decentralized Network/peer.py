@@ -20,7 +20,7 @@ import uuid
 
 class Peer(Client, Server):
     DEFAULT_SERVER_PORT = 5000
-    MIN_PORT = 5004
+    MIN_PORT = 5001
     MAX_PORT = 5010
 
     def __init__(self, server_ip_address = '0.0.0.0'):
@@ -31,7 +31,8 @@ class Peer(Client, Server):
         Client.__init__(self)
         self.list_of_clienthandlers = []
         self.peer_id = uuid.uuid4()
-        self.send_peer_hash = None
+        self.peer_hash = None
+        self.send_hash = {}
 
 
     def peer_client_connector(self, client_port_to_bind, peer_ip_address, peer_port=DEFAULT_SERVER_PORT):
@@ -46,14 +47,14 @@ class Peer(Client, Server):
             self.list_of_clienthandlers.append(client)
 
             print("List of clients: ")
-            print(self.list_of_clienthandlers)
+            # print(self.list_of_clienthandlers)
             print("client connection: " +  str(peer_ip_address[0]) + ":" +str(client_port_to_bind))
             # print("peer port: " + str(peer_port))
             connect_args = (peer_ip_address[0], peer_port)
             thread.Thread(target=client.connect, args=(peer_ip_address[0], peer_port)).start()
-            # client.send(self.send_peer_hash)
+            # client.send(self.peer_hash)
             # Thread(target=client.connect(), args=((peer_ip_address[0], peer_port))).start()  # threads server
-            # tracker.broadcast_not_send()
+            tracker.broadcast_peer_list()
             return True
         except Exception as error:
             print(error)
@@ -115,9 +116,10 @@ if __name__ == '__main__':
     inf_hash = tracker.get_info_unhashed()
     hash = hashlib.sha1()
     hash.update(repr(inf_hash).encode('utf-8'))
-    peer.send_peer_hash = hash.hexdigest()
+    peer.peer_hash = hash.hexdigest()
 
-    send_handshake = pwp.handshake(peer.send_peer_hash, peer.peer_id)
+    send_handshake = pwp.handshake(peer.peer_hash, peer.peer_id)
+    peer.peer_hash = send_handshake
 
     # peer.peer_client_send_handshake(send_handshake)
-    # peer.peer_runner(ip_s)
+    peer.peer_runner(ip_s)
