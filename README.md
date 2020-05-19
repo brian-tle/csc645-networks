@@ -16,7 +16,7 @@ Welcome to Computer Networks!. Please modify this README file with the following
 | Lab 8                    | Completed     |
 | Lab 9                    | Completed     |
 | TCP Client/Server Network| Completed     |
-| P2P Decentralized Network| not done yet  |
+| P2P Decentralized Network| Submitted     |
 | EC1                      | not done yet  |
 | EC2                      | not done yet  |
 
