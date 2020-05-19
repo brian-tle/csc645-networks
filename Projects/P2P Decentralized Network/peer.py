@@ -31,7 +31,7 @@ class Peer(Client, Server):
         Client.__init__(self)
         self.list_of_clienthandlers = []
         self.peer_id = uuid.uuid4()
-        self.peer_info_hash = None
+        self.send_peer_hash = None
 
 
     def peer_client_connector(self, client_port_to_bind, peer_ip_address, peer_port=DEFAULT_SERVER_PORT):
@@ -51,6 +51,7 @@ class Peer(Client, Server):
             # print("peer port: " + str(peer_port))
             connect_args = (peer_ip_address[0], peer_port)
             thread.Thread(target=client.connect, args=(peer_ip_address[0], peer_port)).start()
+            # client.send(self.send_peer_hash)
             # Thread(target=client.connect(), args=((peer_ip_address[0], peer_port))).start()  # threads server
             # tracker.broadcast_not_send()
             return True
@@ -102,24 +103,21 @@ class Peer(Client, Server):
         # num_pieces = tracker.get_amount_of_pieces()
         # pwp = PWP(num_pieces)
 
-    def peer_client_send_handshake(self, handshake):
-        self.client.send(handshake)
 
 if __name__ == '__main__':
     peer = Peer()
     tracker = Tracker(peer.server)
     ip_s = tracker.get_peers_from_announce()
-    peer.peer_runner(ip_s)
 
     num_pieces = tracker.get_amount_of_pieces()
     pwp = PWP(num_pieces)
 
-    peer.peer_info_hash = tracker.get_info_unhashed()
+    inf_hash = tracker.get_info_unhashed()
     hash = hashlib.sha1()
-    hash.update(repr(peer.peer_info_hash).encode('utf-8'))
-    peer.peer_info_hash = hash.hexdigest()
-    # print(hash)
-    # print(peer.peer_info_hash)    
-    send_handshake = pwp.handshake(peer.peer_info_hash, peer.peer_id)
+    hash.update(repr(inf_hash).encode('utf-8'))
+    peer.send_peer_hash = hash.hexdigest()
 
-    peer.peer_client_send_handshake(send_handshake)
+    send_handshake = pwp.handshake(peer.send_peer_hash, peer.peer_id)
+
+    # peer.peer_client_send_handshake(send_handshake)
+    # peer.peer_runner(ip_s)

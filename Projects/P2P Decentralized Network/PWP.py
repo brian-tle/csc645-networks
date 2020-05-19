@@ -33,7 +33,7 @@ class PWP(object):
         :return: the handshake message ready to be sent
         """
         handshake = {'info_hash': info_hash, 'peer_id': peer_id, 'pstrlen': pstrlen, 'pstr': pstr}
-        # print(handshake)
+        print("Got info_hash: " + handshake['info_hash'])
         return handshake
 
     def message(self, payload=None, message_id=-1, len_hex=b'00009'):

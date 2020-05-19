@@ -60,7 +60,7 @@ class Client(object):
             print("Connection made")
             while True: # client is put in listening mode to retrieve data from server.
                 data = self.receive()
-                if data = data['info_hash']:
+                # if data = data['info_hash']:
                     
                 if data:
                     print(data)

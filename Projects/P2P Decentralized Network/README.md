@@ -12,17 +12,20 @@ A decentralized Peer to Peer (P2P) bittorrent  protocol network that connects cl
 * If you used external Python modules/libraries. Provide a requeriments.txt file  
 
 * Python version and compatibility issues (if any)
-Python3.8
+Python3.8.2
 
 * Clear and specific instructions about how to run your project. If your project does not run or contains errors, you'll get a 0 in the project no matter how much work you put on it. So, test your code properly and make sure that it runs without errors.
-–––
+To run the project, you must run only the peer.py file. The peer.py file is the main class
 
 * A few sentences about all the challenges you found during the implementation of this project and how you overcame them. Please be honest here. 
-–––
+
 Starting off, not sure what to do. Probably spent an extra 30~ hours just rereading documentation and how P2P networks work, but implementing and coding it was just too difficult and above my head.
 For the first few days, I did not know what to do with tracker.py. I know it handles the table, connected clients, and assigns swarms, but wasn't sure how to implement, also I was readjusting to making classes in python since I was making many syntax errors. 
+
 While trying to get server / client running and threaded for TCP connections in peer, I ran into a lot of threading issues with the libraries. After that, it was formatting how I wanted the Tracker.py to be formatted and how it tracks. Since the tracker tracks who in what storm, I'm not sure how to implement it besides parsing the torrent file to see who is trying to download which file.
+
 I brought back some of the labs (7/8/9) for the PWP/message classes for handshake and managing the sent data between peers.
+
 
 
 ## Note that failure to provide the above docs will result in a 30% deduction in your final grade for this project. 
